@@ -2,7 +2,3 @@
 vendor/
 bower_components/
 .idea/
-portal/.sass-cache/
-portal/.tmp/
-portal/bower_components/
-portal/node_modules/
