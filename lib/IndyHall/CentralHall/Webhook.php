@@ -21,15 +21,55 @@ class Webhook
 
 	public function login()
 	{
-		// FIXME
-		$result = $_REQUEST;
+		$plugin = $this->_plugin;
+
+		$username = $_REQUEST['username'];
+		$password = $_REQUEST['password'];
+		$macAddress = $_REQUEST['mac_address'];
+		$deviceName = $_REQUEST['device_name'];
+
+		$user = \wp_authenticate($username, $password);
+		if ($user instanceof \WP_User) {
+			// Load list of existing MAC addresses
+			$macMetaKey = $plugin->prefixKey('mac_addresses');
+			$currentMacAddresses = array();
+			if (isset($user->$macMetaKey)) {
+				$currentMacAddresses = $user->$macMetaKey;
+			}
+
+			// Add this device to the list
+			$currentMacAddresses[$macAddress] = $deviceName;
+
+			// Save user
+			\wp_update_user($user);
+
+			// Set result
+			$result = array(
+				'ok' => true,
+				'user' => array(
+					'id' => $user->ID,
+					'display_name' => $user->display_name,
+					'mac_addresses' => $currentMacAddresses
+				);
+			);
+		} else {
+			// Unable to log in
+			$result = array(
+				'ok' => false,
+				'message' => $plugin->translate('Unable to log in with the username and password you provided.')
+			);
+		}
+
 		\wp_send_json($result);
 	}
 
 	public function guest()
 	{
 		// FIXME
-		$result = $_REQUEST;
+		$result = array(
+			'ok' => false,
+			'message' => $plugin->translate('Not implemented.')
+		);
 		\wp_send_json($result);
 	}
 }
