@@ -167,6 +167,7 @@ module.exports = function (grunt) {
 		'cssmin',               // Minify CSS
 		'filerev',              // Revision assets
 		'usemin',               // Apply to HTML
-		'dom_munger'            // Final modifications to HTML
+		'dom_munger',           // Final modifications to HTML
+		'clean:tmp'             // Get rid of .tmp dir
 	]);
 };
