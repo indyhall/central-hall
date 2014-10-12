@@ -32,7 +32,7 @@ module.exports = function (grunt) {
 						'less': [{
 							name: 'less',
 							createConfig: function (context, block) {
-								var cfg = {files: []},
+								var cfg = { files: [] },
 									filesDef = {};
 
 								filesDef.dest = path.join(context.outDir, block.dest);
@@ -53,7 +53,7 @@ module.exports = function (grunt) {
 			}
 		},
 		usemin: {
-			html: ['portal/build/index.html'],
+			html: 'portal/index.html',
 			options: {
 				blockReplacements: {
 					less: function (block) {
@@ -69,8 +69,8 @@ module.exports = function (grunt) {
 	grunt.registerTask('build', [
 		'useminPrepare',
 		'concat:generated',
-		// 'cssmin:generated',
 		'uglify:generated',
+		'less:generated',
 		// 'filerev',
 		'usemin'
 	]);
