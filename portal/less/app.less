@@ -1,3 +1,51 @@
 @import "../../bower_components/bootstrap/less/variables.less";
+@import "variables.less";
 @import "../../bower_components/bootstrap/less/mixins.less";
 @import '../../bower_components/bootstrap/less/normalize.less';
+@import "../../bower_components/bootstrap/less/print.less";
+@import "../../bower_components/bootstrap/less/glyphicons.less";
+
+// Core CSS
+@import "../../bower_components/bootstrap/less/scaffolding.less";
+@import "../../bower_components/bootstrap/less/type.less";
+@import "../../bower_components/bootstrap/less/code.less";
+@import "../../bower_components/bootstrap/less/forms.less";
+@import "../../bower_components/bootstrap/less/buttons.less";
+
+// Components
+@import "../../bower_components/bootstrap/less/component-animations.less";
+@import "../../bower_components/bootstrap/less/navs.less";
+
+// Utils
+@import "../../bower_components/bootstrap/less/utilities.less";
+@import "../../bower_components/bootstrap/less/responsive-utilities.less";
+
+// Setup Structure
+.container {
+	.container-fixed();
+	margin-top: @grid-gutter-width * 2;
+
+	@media (min-width: @screen-sm-min) {
+		width: @container-sm;
+	}
+}
+
+// Customize 'nav' behavior
+.nav {
+	margin-top: @grid-gutter-width;
+	margin-bottom: @grid-gutter-width / 2;
+
+	> li > a {
+		&:hover,
+		&:focus {
+			text-decoration: underline;
+		}
+	}
+
+	> li.active > a {
+		&:hover,
+		&:focus {
+			text-decoration: none;
+		}
+	}
+}
