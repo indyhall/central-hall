@@ -33,7 +33,7 @@
 // Customize 'nav' behavior
 .nav {
 	margin-top: @grid-gutter-width;
-	margin-bottom: @grid-gutter-width / 2;
+	// margin-bottom: @grid-gutter-width / 2;
 
 	> li > a {
 		&:hover,
@@ -47,5 +47,15 @@
 		&:focus {
 			text-decoration: none;
 		}
+	}
+}
+
+.login-box {
+	border: 1px solid @nav-tabs-border-color;
+	border-top: none;
+	padding: @padding-base-vertical @padding-base-horizontal;
+
+	@media (min-width: @screen-md-min) {
+		padding: @padding-large-vertical @padding-large-horizontal;
 	}
 }
