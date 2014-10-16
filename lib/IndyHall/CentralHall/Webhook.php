@@ -23,53 +23,151 @@ class Webhook
 	{
 		$plugin = $this->_plugin;
 
-		$username = $_REQUEST['username'];
-		$password = $_REQUEST['password'];
-		$macAddress = $_REQUEST['mac_address'];
-		$deviceName = $_REQUEST['device_name'];
+		// key => required
+		$validated = $this->_fields(array(
+			'username' => true,
+			'password' => true,
+			'mac_address' => true,
+			'device_name' => false
+		));
 
-		$user = \wp_authenticate($username, $password);
-		if ($user instanceof \WP_User) {
-			// Load list of existing MAC addresses
-			$macMetaKey = $plugin->prefixKey('mac_addresses');
-			$currentMacAddresses = array();
-			if (isset($user->$macMetaKey)) {
-				$currentMacAddresses = $user->$macMetaKey;
-			}
-
-			// Add this device to the list
-			$currentMacAddresses[$macAddress] = $deviceName;
-
-			// Save user
-			\wp_update_user($user);
-
-			// Set result
-			$result = array(
-				'ok' => true,
-				'user' => array(
-					'id' => $user->ID,
-					'display_name' => $user->display_name,
-					'mac_addresses' => $currentMacAddresses
-				);
-			);
-		} else {
-			// Unable to log in
+		$result = false;
+		if ($validated instanceof \WP_Error) {
 			$result = array(
 				'ok' => false,
-				'message' => $plugin->translate('Unable to log in with the username and password you provided.')
+				'message' => $validated->get_error_message(),
+				'data' => $validated->get_error_data()
 			);
 		}
 
+		if (!$result) {
+			extract($validated);
+
+			$user = \wp_authenticate($username, $password);
+			if ($user instanceof \WP_User) {
+				// Load list of existing MAC addresses
+				$macMetaKey = $plugin->prefixKey('mac_addresses');
+				$currentMacAddresses = array();
+				if (isset($user->$macMetaKey)) {
+					$currentMacAddresses = $user->$macMetaKey;
+				}
+
+				// Add this device to the list
+				$currentMacAddresses[$mac_address] = $device_name;
+
+				// Save user
+				\update_user_meta($user->ID, $macMetaKey, $currentMacAddresses);
+
+				if ($plugin->logConnection($mac_address, 'connected')) {
+					// Set result
+					$result = array(
+						'ok' => true,
+						'user' => array(
+							'id' => $user->ID,
+							'display_name' => $user->display_name,
+							'roles' => $user->roles,
+							'mac_addresses' => $currentMacAddresses
+						)
+					);
+				} else {
+					$result = array(
+						'ok' => false,
+						'message' => 'Unable to log you in due to an internal error.  Please find a staff member and
+							provide them with this: <strong>' . $mac_address . '</strong>'
+					);
+				}
+			} else {
+				// Unable to log in
+				$result = array(
+					'ok' => false,
+					'message' => $plugin->translate('Unable to log in with the username and password you provided.')
+				);
+			}
+		}
+
+		$result = $plugin->filter('login_result', $result, $validated);
 		\wp_send_json($result);
 	}
 
 	public function guest()
 	{
-		// FIXME
-		$result = array(
-			'ok' => false,
-			'message' => $plugin->translate('Not implemented.')
-		);
+		$plugin = $this->_plugin;
+		$guestPassword = $plugin->getOption('guest_password', $plugin::DEFAULT_GUEST_PASSWORD);
+
+		$validated = $this->_fields(array(
+			'name' => true,
+			'password' => true,
+			'mac_address' => true,
+			'host' => false
+		));
+
+		if ($validated instanceof \WP_Error) {
+			$result = array(
+				'ok' => false,
+				'message' => $validated->get_error_message(),
+				'data' => $validated->get_error_data()
+			);
+		} else {
+			extract($validated);
+
+			if ($password == $guestPassword) {
+				if ($plugin->logGuest($mac_address, $name, $host) && $plugin->logConnection($mac_address, 'connected')) {
+					$result = array(
+						'ok' => true,
+						'guest' => $validated
+					);
+				} else {
+					$result = array(
+						'ok' => false,
+						'message' => 'Unable to log you in due to an internal error.  Please find a staff member and
+							provide them with this: <strong>' . $mac_address . '</strong>'
+					);
+				}
+			} else {
+				$result = array(
+					'ok' => false,
+					'message' => 'Invalid guest password.'
+				);
+			}
+		}
+
+		// Filter & send result to client
+		$result = $plugin->filter('guest_login_result', $result, $validated);
 		\wp_send_json($result);
+	}
+
+	protected function _fields($schema)
+	{
+		$validated = array();
+
+		foreach ($schema as $key => $required) {
+			// Determine label
+			$label = str_replace('_', ' ', $key);
+
+			// Get value
+			$val = null;
+			if (isset($_REQUEST[$key])) {
+				$val = $_REQUEST[$key];
+			}
+
+			// Validate
+			if ($required && empty($val)) {
+				return new \WP_Error('missing', ucfirst($label) . ' is required.', $key);
+			}
+
+			// Special validations
+			switch ($key) {
+				case 'mac_address':
+					$val = strtoupper(str_replace(':', '', $val));
+					if (12 !== strlen($val) || !ctype_xdigit($val)) {
+						return new \WP_Error('invalid', 'That is not a valid MAC address.', $key);
+					}
+					break;
+			}
+
+			$validated[$key] = $val;
+		}
+
+		return $validated;
 	}
 }

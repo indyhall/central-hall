@@ -19,6 +19,7 @@ class Plugin
 	const SLUG = 'indyhall-central-hall';
 	const PREFIX = 'indyhall_central_hall_';
 	const DB_SCHEMA_VERSION = 1;
+	const DEFAULT_GUEST_PASSWORD = 'cowork with me';
 
 	/**
 	 * @var String The location of the plugin's bootstrap file
@@ -193,6 +194,30 @@ class Plugin
 		$args = func_get_args();
 		$args[0] = $this->prefixKey($tag);
 		return call_user_func_array('\do_action', $args);
+	}
+
+	public function logConnection($mac, $event)
+	{
+		global $wpdb;
+
+		$sql = 'INSERT INTO ' . $this->getTable('connection_log') . ' (`log_date`, `mac_address`, `connection_event`)
+				VALUES (NOW(), %s, %s)';
+		$query = $wpdb->prepare($sql, $mac, $event);
+		$id = $wpdb->query($query);
+
+		return $id;
+	}
+
+	public function logGuest($mac, $name, $host)
+	{
+		global $wpdb;
+
+		$sql = 'INSERT INTO ' . $this->getTable('guest_log') . ' (`log_date`, `guest_name`, `host_name`, `mac_address`)
+				VALUES (NOW(), %s, %s, %s)';
+		$query = $wpdb->prepare($sql, $name, $host, $mac);
+		$id = $wpdb->query($query);
+
+		return $id;
 	}
 
 	/**
