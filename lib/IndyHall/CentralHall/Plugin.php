@@ -12,7 +12,7 @@ namespace IndyHall\CentralHall;
  *   - Naming consistency
  *   - Helper functionality
  *
- * @package IndyHall\Intercom
+ * @package IndyHall\CentralHall
  */
 class Plugin
 {
