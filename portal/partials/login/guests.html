@@ -4,15 +4,15 @@
 		<input type="text" class="form-control" id="name" />
 	</div>
 	<div class="form-group">
-		<label for="pin">Today's Guest Password</label>
+		<label for="guest-password">Today's Guest Password</label>
 		<input type="password" class="form-control" id="guest-password" />
 	</div>
 
 	<hr />
 
 	<div class="form-group">
-		<label for="name">I'm a Guest Of (optional)</label>
-		<input type="text" class="form-control" id="sponsor-name" />
+		<label for="host">I'm a Guest Of (optional)</label>
+		<input type="text" class="form-control" id="host" />
 	</div>
 	<button id="guest-login" class="btn btn-primary" ng-click="login()">Log In As a Guest <span class="glyphicon glyphicon-chevron-right"></span></button>
 	<a ui-sref="login.help" class="btn btn-link">How do I get a guest password?</a>
