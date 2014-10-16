@@ -59,3 +59,11 @@
 		padding: @padding-large-vertical @padding-large-horizontal;
 	}
 }
+
+.nav > li.hide-when-inactive {
+	display: none;
+
+	&.active {
+		display: block;
+	}
+}

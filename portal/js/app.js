@@ -16,5 +16,9 @@ angular.module('app', ['ui.router'])
 			.state('login.guests', {
 				url: '/guests',
 				templateUrl: 'partials/login/guests.html'
+			})
+			.state('login.help', {
+				url: '/help',
+				templateUrl: 'partials/login/help.html'
 			});
 });;
