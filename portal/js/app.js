@@ -11,11 +11,13 @@ angular.module('app', ['ui.router'])
 			})
 			.state('login.members', {
 				url: '/members',
-				templateUrl: 'partials/login/members.html'
+				templateUrl: 'partials/login/members.html',
+				controller: 'LoginMemberController'
 			})
 			.state('login.guests', {
 				url: '/guests',
-				templateUrl: 'partials/login/guests.html'
+				templateUrl: 'partials/login/guests.html',
+				controller: 'LoginGuestController'
 			})
 			.state('login.help', {
 				url: '/help',
