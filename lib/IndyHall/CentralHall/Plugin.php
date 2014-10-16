@@ -134,7 +134,11 @@ class Plugin
 	 */
 	public function getOption($key, $default = false)
 	{
-		return \get_option($this->prefixKey($key), $default);
+		$key = $this->prefixKey($key);
+		if (defined(strtoupper($key))) {
+			return constant(strtoupper($key));
+		}
+		return \get_option($key, $default);
 	}
 
 	/**
