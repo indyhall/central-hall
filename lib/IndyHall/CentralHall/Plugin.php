@@ -18,6 +18,7 @@ class Plugin
 {
 	const SLUG = 'indyhall-central-hall';
 	const PREFIX = 'indyhall_central_hall_';
+	const DB_SCHEMA_VERSION = 1;
 
 	/**
 	 * @var String The location of the plugin's bootstrap file
@@ -47,8 +48,9 @@ class Plugin
 		$this->_baseName = \plugin_basename($bootstrap);
 
 		// Register hooks
-		\register_activation_hook($bootstrap, array(self, 'activate'));
-		\register_deactivation_hook($bootstrap, array(self, 'deactivate'));
+		\register_activation_hook($bootstrap, array($this, 'activate'));
+		\register_deactivation_hook($bootstrap, array($this, 'deactivate'));
+		\add_action('plugins_loaded', array($this, 'checkDatabaseSchema'));
 
 		$this->doAction('pre_init');
 
@@ -109,6 +111,18 @@ class Plugin
 	public function prefixKey($key)
 	{
 		return self::PREFIX . $key;
+	}
+
+	/**
+	 * Get the name of a table, keeping in mind the WPDB prefix and our namespace
+	 *
+	 * @param String $name Name of table
+	 * @return string Namespaced & prefixed name of table
+	 */
+	public function getTable($name)
+	{
+		global $wpdb;
+		return $wpdb->prefix . $this->prefixKey($name);
 	}
 
 	/**
@@ -180,16 +194,55 @@ class Plugin
 	/**
 	 * Activation hook
 	 */
-	public static function activate()
+	public function activate()
 	{
-		// May want this down the road
+		$this->_setupDb();
+	}
+
+	public function checkDatabaseSchema()
+	{
+		if ($this->getOption('db_schema_version') != self::DB_SCHEMA_VERSION) {
+			$this->_setupDb();
+		}
+	}
+
+	/**
+	 * Sets up database tables
+	 */
+	protected function _setupDb()
+	{
+		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+
+		$sql = array();
+		$sql[] = 'CREATE TABLE ' . $this->getTable('guest_log') . ' (
+					ID int(11) unsigned NOT NULL AUTO_INCREMENT,
+					log_date datetime NOT NULL DEFAULT "0000-00-00 00:00:00",
+					guest_name varchar(55) NOT NULL DEFAULT "",
+					host_name varchar(55) DEFAULT NULL,
+					mac_address char(12) NOT NULL DEFAULT "00000000",
+					PRIMARY KEY (ID)
+				);';
+		$sql[] = 'CREATE TABLE ' . $this->getTable('connection_log') . ' (
+					ID int(11) unsigned NOT NULL AUTO_INCREMENT,
+					log_date datetime NOT NULL DEFAULT "0000-00-00 00:00:00",
+					mac_address char(12) NOT NULL DEFAULT "00000000",
+					connection_event varchar(15) NOT NULL DEFAULT "connected",
+					PRIMARY KEY (ID)
+				);';
+
+
+		foreach($sql as $query) {
+			\dbDelta($query);
+		}
+
+		$this->setOption('db_schema_version', self::DB_SCHEMA_VERSION);
 	}
 
 	/**
 	 * Deactivation hook
 	 */
-	public static function deactivate()
+	public function deactivate()
 	{
-		// Also may need this
+		// TODO: Add an option to delete tables on deactivation
 	}
 }
