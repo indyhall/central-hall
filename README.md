@@ -21,12 +21,12 @@ Once the `portal/build/` directory has been created, you can upload the plugin.
 
 ## TODO
 
-- [ ] Implement login actions via an Angular service
-- [ ] Complete login action in Wordpress plugin
-- [ ] Complete guest action in Wordpress plugin
+- [x] Implement login actions via an Angular service
+- [X] Complete login action in Wordpress plugin
+- [X] Complete guest action in Wordpress plugin
 - [ ] Build settings page:
   - [ ] Allow for logo upload
   - [ ] Allow for custom terms
   - [ ] Allow for "lost password" instructions
-  - [ ] Let download the boostrap HTML file
-    - [ ] Needs to replace references to CSS/JS with script-loader.js
+  - [x] Let download the boostrap HTML file
+    - [x] Needs to replace references to CSS/JS with script-loader.js
