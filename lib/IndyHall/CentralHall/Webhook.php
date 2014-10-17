@@ -86,7 +86,7 @@ class Webhook
 		}
 
 		$result = $plugin->filter('login_result', $result, $validated);
-		\wp_send_json($result);
+		$this->_respondAndExit($result);
 	}
 
 	public function guest()
@@ -133,7 +133,7 @@ class Webhook
 
 		// Filter & send result to client
 		$result = $plugin->filter('guest_login_result', $result, $validated);
-		\wp_send_json($result);
+		$this->_respondAndExit($result);
 	}
 
 	protected function _fields($schema)
@@ -158,9 +158,13 @@ class Webhook
 			// Special validations
 			switch ($key) {
 				case 'mac_address':
-					$val = strtoupper(str_replace(':', '', $val));
-					if (12 !== strlen($val) || !ctype_xdigit($val)) {
-						return new \WP_Error('invalid', 'That is not a valid MAC address.', $key);
+					if ('$CLIENT_MAC$' == $val) {
+						$val = 'DEBUG0000000';
+					} else {
+						$val = strtoupper(str_replace(':', '', $val));
+						if (12 !== strlen($val) || !ctype_xdigit($val)) {
+							return new \WP_Error('invalid', 'That is not a valid MAC address.', $key);
+						}
 					}
 					break;
 			}
@@ -169,5 +173,28 @@ class Webhook
 		}
 
 		return $validated;
+	}
+
+	protected function _respondAndExit($data = array())
+	{
+		header('Content-Type: application/javascript; charset=utf-8');
+		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+		header('Cache-Control: no-store, no-cache, must-revalidate');
+		header('Cache-Control: post-check=0, pre-check=0', false);
+		header('Pragma: no-cache');
+		
+		// $data = array_merge(array('ok' => $ok), $data);
+
+		$callback = (isset($_REQUEST['callback']) ? $_REQUEST['callback'] : null);
+		if (null == $callback || !preg_match('/^[$a-z_][a-z0-9$_]*(\.[$a-z_][a-z0-9$_]*)*$/i', $callback)) {
+			echo '(function() { console && console.log && console.log("Invalid callback:", ' . json_encode($callback) . '); }());';
+			exit;
+		}
+		
+		echo "$callback && $callback(";
+		echo json_encode($data);
+		echo ');';
+		exit;
 	}
 }

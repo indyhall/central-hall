@@ -9,6 +9,10 @@
 	<link rel="stylesheet/less" href="less/app.less" />
 	<!-- endbuild -->
 	<script class="dev-only" src="../bower_components/less/dist/less-1.7.5.js"></script>
+	<script>
+		var loginUrl = 'http://wordpress.site/wp-admin/admin-ajax.php?action=indyhall_central_hall_login';
+		var guestLoginUrl = 'http://wordpress.site/wp-admin/admin-ajax.php?action=indyhall_central_hall_guest';
+	</script>
 </head>
 <body>
 	<noscript>Please enable JavaScript and reload this page.</noscript>
@@ -21,6 +25,7 @@
 	<script src="../bower_components/angular-ui-router/release/angular-ui-router.js"></script>
 	<script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 	<script src="js/app.js"></script>
+	<script src="js/auth-service.js"></script>
 	<script src="js/login-controller.js"></script>
 	<script src="js/login/member-controller.js"></script>
 	<script src="js/login/guest-controller.js"></script>

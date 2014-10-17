@@ -1,5 +1,5 @@
 // Setup App
-angular.module('app', ['ui.router'])
+angular.module('app', ['ui.router', 'ui.bootstrap'])
 	.config(function($stateProvider, $urlRouterProvider) {
 		$urlRouterProvider
 			.otherwise('/login/members');

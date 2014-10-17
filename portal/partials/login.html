@@ -9,20 +9,26 @@
 	<p>Got it?  OK, let's get you online:</p>
 </div>
 
-<ul class="nav nav-tabs" role="tablist">
-	<li ui-sref-active="active">
-		<a ui-sref="login.members"><span class="glyphicon glyphicon-user"></span> Existing Members</a>
-	</li>
-	<li ui-sref-active="active">
-		<a ui-sref="login.guests">Guests</a>
-	</li>
-	<li ui-sref-active="active" class="hide-when-inactive">
-		<a ui-sref="login.help">Help</a>
-	</li>
-</ul>
+<div id="login">
+	<ul class="nav nav-tabs" role="tablist">
+		<li ui-sref-active="active">
+			<a ui-sref="login.members"><span class="glyphicon glyphicon-user"></span> Existing Members</a>
+		</li>
+		<li ui-sref-active="active">
+			<a ui-sref="login.guests">Guests</a>
+		</li>
+		<li ui-sref-active="active" class="hide-when-inactive">
+			<a ui-sref="login.help">Help</a>
+		</li>
+	</ul>
 
-<div ui-view class="login-box"></div>
+	<div ui-view class="login-box"></div>
+</div>
 
 <input type="hidden" id="mac-address" value="$CLIENT_MAC$" />
 <input type="hidden" id="redirect-url" value="$PORTAL_REDIRURL$" />
-<input type="hidden" id="portal-action" value="$PORTAL_ACTION$" />
+
+<form id="auth-form" method="post" action="$PORTAL_ACTION$" style="display: none;">
+	<input name="redirurl" type="hidden" value="$PORTAL_REDIRURL$">
+	<input name="accept" type="submit" value="Continue" />
+</form>
