@@ -7,7 +7,10 @@ Version: 1.0.0
 Author: Chris Morrell
 Author URI: http://cmorrell.com
 License: GPL2
+GitHub Plugin URI: indyhall/central-hall
 */
+
+// See https://github.com/afragen/github-updater for automatic updates
 
 require_once __DIR__ . '/vendor/autoload.php';
 new \IndyHall\CentralHall\Plugin(__FILE__);
