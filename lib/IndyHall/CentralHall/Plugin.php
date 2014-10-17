@@ -104,6 +104,34 @@ class Plugin
 	}
 
 	/**
+	 * Reads a file in this plugin's directory
+	 *
+	 * @param String $filename Relative path to file (relative to plugin root)
+	 * @return bool|string FALSE or error, file contents on success
+	 */
+	public function readFile($filename)
+	{
+		$filename = $this->pathToFile($filename);
+
+		if (!is_readable($filename)) {
+			return false;
+		}
+
+		$handle = fopen($filename, 'r');
+		if (!$handle) {
+			return false;
+		}
+
+		$data = fread($handle, filesize($filename));
+		if (!$data) {
+			return false;
+		}
+
+		fclose($handle);
+		return $data;
+	}
+
+	/**
 	 * Prefix a string for namespaced use
 	 *
 	 * @param String $key Any string

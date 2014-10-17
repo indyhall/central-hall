@@ -17,6 +17,10 @@ class Webhook
 		// Guest Login
 		\add_action('wp_ajax_' . $plugin->prefixKey('guest'), array($this, 'guest'));
 		\add_action('wp_ajax_nopriv_' . $plugin->prefixKey('guest'), array($this, 'guest'));
+
+		// Script loader
+		\add_action('wp_ajax_' . $plugin->prefixKey('script'), array($this, 'script'));
+		\add_action('wp_ajax_nopriv_' . $plugin->prefixKey('script'), array($this, 'script'));
 	}
 
 	public function login()
@@ -134,6 +138,40 @@ class Webhook
 		// Filter & send result to client
 		$result = $plugin->filter('guest_login_result', $result, $validated);
 		$this->_respondAndExit($result);
+	}
+
+	public function script()
+	{
+		$plugin = $this->_plugin;
+
+		header('Content-Type: application/javascript; charset=utf-8');
+		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+		header('Cache-Control: no-store, no-cache, must-revalidate');
+		header('Cache-Control: post-check=0, pre-check=0', false);
+		header('Pragma: no-cache');
+
+		echo "(function() {";
+		echo "\nvar base = " . json_encode($plugin->urlToFile('/portal/build/')) . ';';
+		echo "\nvar files = { css: [], js: [] };";
+
+		$iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($plugin->pathToFile('portal/build/')));
+		$regexIterator = new \RegexIterator($iterator, '/(css|js)' . preg_quote(DIRECTORY_SEPARATOR, '/') . '.+\.(?:js|css)$/i', \RecursiveRegexIterator::GET_MATCH);
+		foreach($regexIterator as $match) {
+			$dir = $match[1];
+			$path = $match[0];
+			echo "\nfiles.{$dir}.push(" . json_encode($path) . ');';
+		}
+
+		$scriptLoader = $plugin->readFile('portal/js/script-loader.js');
+		if ($scriptLoader) {
+			echo "\n" . $scriptLoader;
+		} else {
+			echo "\nconsole && console.error && console.error('Unable to read script loader.');";
+		}
+
+		echo "\n}());";
+		exit;
 	}
 
 	protected function _fields($schema)
