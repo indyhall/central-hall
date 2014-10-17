@@ -68,6 +68,7 @@ class Settings
 
 			<p>The current guest password is <strong><?=htmlspecialchars($guestPassword)?></strong></p>
 			<p>Download the latest portal HTML: <a href="<?=$ajaxBase?>?action=<?=$downloadUrl?>"><?=$ajaxBase?>?action=<?=$downloadUrl?></a></p>
+			<p><strong>Preview</strong> the latest portal HTML: <a href="<?=$ajaxBase?>?action=<?=$downloadUrl?>&view=html"><?=$ajaxBase?>?action=<?=$downloadUrl?>&amp;view=html</a></p>
 
 			<h3>API Endpoints</h3>
 
@@ -148,7 +149,9 @@ class Settings
 		if (isset($_REQUEST['view']) && 'html' == $_REQUEST['view']) {
 			header('Content-Type: text/html');
 		} else {
-			header('Content-Type: text/plain');
+			header('Content-Type: application/octet-stream');
+			header('Content-Transfer-Encoding: Binary');
+			header('Content-disposition: attachment; filename="pfsense-captive-portal- ' .date('Y-m-d') . '.html"');
 		}
 
 		echo $source;
