@@ -228,9 +228,9 @@ class Plugin
 	{
 		global $wpdb;
 
-		$sql = 'INSERT INTO ' . $this->getTable('connection_log') . ' (`log_date`, `mac_address`, `connection_event`)
-				VALUES (NOW(), %s, %s)';
-		$query = $wpdb->prepare($sql, $mac, $event);
+		$sql = 'INSERT INTO ' . $this->getTable('connection_log') . ' (`log_date`, `ip_address`, `mac_address`, `connection_event`)
+				VALUES (NOW(), INET_ATON(%s), %s, %s)';
+		$query = $wpdb->prepare($sql, $this->_remoteIp(), $mac, $event);
 		$id = $wpdb->query($query);
 
 		return $id;
@@ -240,12 +240,23 @@ class Plugin
 	{
 		global $wpdb;
 
-		$sql = 'INSERT INTO ' . $this->getTable('guest_log') . ' (`log_date`, `guest_name`, `host_name`, `mac_address`)
-				VALUES (NOW(), %s, %s, %s)';
-		$query = $wpdb->prepare($sql, $name, $host, $mac);
+		$sql = 'INSERT INTO ' . $this->getTable('guest_log') . ' (`log_date`, `guest_name`, `host_name`, `ip_address`, `mac_address`)
+				VALUES (NOW(), %s, %s, INET_ATON(%s), %s)';
+		$query = $wpdb->prepare($sql, $name, $host, $this->_remoteIp(), $mac);
 		$id = $wpdb->query($query);
 
 		return $id;
+	}
+
+	protected function _remoteIp()
+	{
+		if ($this->getOption('allow_client_ip', true) && !empty($_SERVER['HTTP_CLIENT_IP'])) {
+			return $_SERVER['HTTP_CLIENT_IP'];
+		} elseif ($this->getOption('allow_x_forwarded_for', true) && !empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+			return  $_SERVER['HTTP_X_FORWARDED_FOR'];
+		}
+
+		return $_SERVER['REMOTE_ADDR'];
 	}
 
 	/**
@@ -276,12 +287,14 @@ class Plugin
 					log_date datetime NOT NULL DEFAULT "0000-00-00 00:00:00",
 					guest_name varchar(55) NOT NULL DEFAULT "",
 					host_name varchar(55) DEFAULT NULL,
+					ip_address int(11) unsigned NOT NULL DEFAULT 0,
 					mac_address char(12) NOT NULL DEFAULT "00000000",
 					PRIMARY KEY (ID)
 				);';
 		$sql[] = 'CREATE TABLE ' . $this->getTable('connection_log') . ' (
 					ID int(11) unsigned NOT NULL AUTO_INCREMENT,
 					log_date datetime NOT NULL DEFAULT "0000-00-00 00:00:00",
+					ip_address int(11) UNSIGNED NOT NULL DEFAULT 0,
 					mac_address char(12) NOT NULL DEFAULT "00000000",
 					connection_event varchar(15) NOT NULL DEFAULT "connected",
 					PRIMARY KEY (ID)

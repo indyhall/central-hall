@@ -86,7 +86,9 @@ class Settings
 				Right now, this is how you configure the plugin.  Either set them in your <code>wp-config.php</code> file, or
 				using a separate plugin.</p>
 
-			<p><code><?=strtoupper($plugin->prefixKey('guest_password'))?></code> — default guest password.</p>
+			<p><code><?=strtoupper($plugin->prefixKey('guest_password'))?></code> — default guest password (defaults to &quot;<?=$plugin::DEFAULT_GUEST_PASSWORD?>&quot;.</p>
+			<p><code><?=strtoupper($plugin->prefixKey('allow_client_ip'))?></code> — trust <code>Client-IP</code> header (defaults to TRUE).</p>
+			<p><code><?=strtoupper($plugin->prefixKey('allow_x_forwarded_for'))?></code> — trust <code>X-Forwarded-For</code> header (defaults to TRUE).</p>
 
 			<h3>Actions &amp; Filters</h3>
 
