@@ -128,7 +128,7 @@ class Settings
 				?>
 
 					<tr>
-						<td><?=htmlspecialchars($conn->log_date)?></td>
+						<td><?=htmlspecialchars(\date_i18n(\get_option('date_format'), $conn->log_date))?></td>
 						<td><?=htmlspecialchars($conn->ip_address)?></td>
 						<td><?=htmlspecialchars($conn->mac_address)?></td>
 						<td><?=htmlspecialchars($conn->connection_event)?></td>

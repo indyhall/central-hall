@@ -256,7 +256,10 @@ class Plugin
 		$limit = intval($limit);
 		$limit = ($limit ? $limit : 100);
 
-		$sql = 'SELECT *
+		$sql = 'SELECT UNIX_TIMESTAMP(`log_date`) AS "log_date", 
+					INET_NTOA(`ip_address`) AS "ip_address", 
+					`mac_address`, 
+					`connection_event`
 				FROM ' . $this->getTable('connection_log') . '
 				ORDER BY `log_date` DESC
 				LIMIT ' . $start . ', ' . $limit;
