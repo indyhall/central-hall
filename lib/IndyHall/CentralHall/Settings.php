@@ -109,21 +109,36 @@ class Settings
 
 			<h3>Recent Connections</h3>
 
-			<table>
+			<table class="widefat fixed">
 
-			<?php
-			$conns = $plugin->listConnections();
-			foreach ($conns as $conn):
-			?>
+				<thead>
+					<tr>
+						<th>Date</th>
+						<th>IP Address</th>
+						<th>MAC Address</th>
+						<th>Event</th>
+					</tr>
+				</thead>
 
-				<tr>
-					<td><?=htmlspecialchars($conn->log_date)?></td>
-					<td><?=htmlspecialchars($conn->ip_address)?></td>
-					<td><?=htmlspecialchars($conn->mac_address)?></td>
-					<td><?=htmlspecialchars($conn->connection_event)?></td>
-				</tr>
+				<tbody>
 
-			<? endforeach; ?>
+				<?php
+				$recentConnections = $plugin->listConnections();
+				foreach ($recentConnections as $conn) {
+				?>
+
+					<tr>
+						<td><?=htmlspecialchars($conn->log_date)?></td>
+						<td><?=htmlspecialchars($conn->ip_address)?></td>
+						<td><?=htmlspecialchars($conn->mac_address)?></td>
+						<td><?=htmlspecialchars($conn->connection_event)?></td>
+					</tr>
+
+				<?php
+				} // Foreach $recentConnections
+				?>
+
+				</tbody>
 
 			</table>
 
@@ -133,13 +148,15 @@ class Settings
 				<a href="https://github.com/indyhall/central-hall" target="_blank">contributing
 				on Github</a>.</small></p>
 
-			<? /*
+			<?php
+			/*
 			<form method="POST" action="options.php">
 				<?php \settings_fields($plugin->prefixKey('settings')); ?>
 				<?php \do_settings_sections($plugin->prefixKey('settings')); ?>
 				<?php \submit_button(); ?>
 			</form>
-            */ ?>
+            */
+            ?>
 		</div>
 
 	<?php

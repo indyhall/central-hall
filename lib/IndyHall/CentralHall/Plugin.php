@@ -261,7 +261,7 @@ class Plugin
 				ORDER BY `log_date` DESC
 				LIMIT ' . $start . ', ' . $limit;
 		$results = $wpdb->get_results($sql);
-
+		
 		return $results;
 	}
 
