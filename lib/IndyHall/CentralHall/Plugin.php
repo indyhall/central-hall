@@ -260,8 +260,7 @@ class Plugin
 				FROM ' . $this->getTable('connection_log') . '
 				ORDER BY `log_date` DESC
 				LIMIT ' . $start . ', ' . $limit;
-		$query = $wpdb->prepare($sql, $this->_remoteIp(), $mac, $event);
-		$results = $wpdb->get_results($query);
+		$results = $wpdb->get_results($sql);
 
 		return $results;
 	}
