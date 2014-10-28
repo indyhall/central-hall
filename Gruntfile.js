@@ -33,7 +33,8 @@ module.exports = function (grunt) {
 		},
 		clean: {
 			build: ['portal/build/'],
-			tmp: ['.tmp/']
+			tmp: ['.tmp/'],
+			release: ['release']
 		},
 		copy: {
 			freshportal: {
@@ -49,6 +50,27 @@ module.exports = function (grunt) {
 			html: {
 				src: '.tmp/index.html',
 				dest: 'portal/build/index.html'
+			},
+			release: {
+				expand: true,
+				src:[
+					'lib/**',
+					'portal/build/**',
+					'portal/js/script-loader.js',
+					'vendor/**',
+					'*.php',
+					'composer.json',
+					'LICENSE',
+					'README.md'
+				],
+				dest: 'release/<%=pkg.name%>'
+			}
+		},
+		zip: {
+			release: {
+				cwd: 'release/',
+				src: 'release/<%=pkg.name%>/**',
+				dest: 'release/<%=pkg.name%>-<%=pkg.version%>.zip'
 			}
 		},
 		useminPrepare: {
@@ -168,6 +190,8 @@ module.exports = function (grunt) {
 		'filerev',              // Revision assets
 		'usemin',               // Apply to HTML
 		'dom_munger',           // Final modifications to HTML
-		'clean:tmp'             // Get rid of .tmp dir
+		'clean:tmp',            // Get rid of .tmp dir
+		'copy:release',			// Create the release directory
+		'zip:release'			// Zip up release
 	]);
 };
