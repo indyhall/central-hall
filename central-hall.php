@@ -8,6 +8,7 @@ Author: Chris Morrell
 Author URI: http://cmorrell.com
 License: GPL2
 GitHub Plugin URI: indyhall/central-hall
+GitHub Branch: release
 */
 
 // See https://github.com/afragen/github-updater for automatic updates
