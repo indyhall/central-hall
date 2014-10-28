@@ -29,6 +29,9 @@
 <input type="hidden" id="redirect-url" value="$PORTAL_REDIRURL$" />
 
 <form id="auth-form" method="post" action="$PORTAL_ACTION$" style="display: none;">
-	<input name="redirurl" type="hidden" value="$PORTAL_REDIRURL$">
+	<input name="redirurl" type="hidden" value="$PORTAL_REDIRURL$" />
+	<input name="zone" type="hidden" value="$PORTAL_ZONE$" />
 	<input name="accept" type="submit" value="Continue" />
 </form>
+
+<div id="portal-message" style="display: none;">$PORTAL_MESSAGE$</div>
