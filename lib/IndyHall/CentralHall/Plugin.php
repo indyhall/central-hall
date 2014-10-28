@@ -248,6 +248,24 @@ class Plugin
 		return $id;
 	}
 
+	public function listConnections($start = 0, $limit = 100)
+	{
+		global $wpdb;
+
+		$start = intval($start);
+		$limit = intval($limit);
+		$limit = ($limit ? $limit : 100);
+
+		$sql = 'SELECT *
+				FROM ' . $this->getTable('connection_log') . '
+				ORDER BY `log_date` DESC
+				LIMIT ' . $start . ', ' . $limit;
+		$query = $wpdb->prepare($sql, $this->_remoteIp(), $mac, $event);
+		$results = $wpdb->get_results($query);
+
+		return $results;
+	}
+
 	protected function _remoteIp()
 	{
 		if ($this->getOption('allow_client_ip', true) && !empty($_SERVER['HTTP_CLIENT_IP'])) {

@@ -107,6 +107,26 @@ class Settings
 				has been built.  <a href="https://github.com/indyhall/central-hall" target="_blank">More information
 					on Github</a>.</p>
 
+			<h3>Recent Connections</h3>
+
+			<table>
+
+			<?php
+			$conns = $plugin->listConnections();
+			foreach ($conns as $conn):
+			?>
+
+				<tr>
+					<td><?=htmlspecialchars($conn->log_date)?></td>
+					<td><?=htmlspecialchars($conn->ip_address)?></td>
+					<td><?=htmlspecialchars($conn->mac_address)?></td>
+					<td><?=htmlspecialchars($conn->connection_event)?></td>
+				</tr>
+
+			<? endforeach; ?>
+
+			</table>
+
 			<hr />
 
 			<p><small>Make this plugin easier to use—<em>a settings GUI would be fantastic</em>—by
