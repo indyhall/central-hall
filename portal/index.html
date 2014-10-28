@@ -16,7 +16,19 @@
 </head>
 <body>
 	<noscript>Please enable JavaScript and reload this page.</noscript>
-	<div class="container" ui-view></div>
+	<div class="container" ui-view>Loading...</div>
+
+	<input type="hidden" id="mac-address" value="$CLIENT_MAC$" />
+	<input type="hidden" id="redirect-url" value="$PORTAL_REDIRURL$" />
+
+	<form id="auth-form" method="post" action="$PORTAL_ACTION$" style="display: none;">
+		<input name="redirurl" type="hidden" value="$PORTAL_REDIRURL$" />
+		<input name="zone" type="hidden" value="$PORTAL_ZONE$" />
+		<input name="accept" type="submit" value="Continue" />
+	</form>
+
+	<div id="portal-message" style="display: none;">$PORTAL_MESSAGE$</div>
+
 	<!-- build:js js/app.js -->
 	<script src="../bower_components/jquery/dist/jquery.js"></script>
 	<script src="../bower_components/bootstrap/js/transition.js"></script>
