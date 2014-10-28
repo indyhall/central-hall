@@ -2,7 +2,13 @@
 
 Central Hall is a Wordpress plugin and PFSense "captive portal" solution to manage access to a network via Wordpress login.
 
+## Installing
+
+Download the latest version from the "release" branch, and install the [github-updater](https://github.com/afragen/github-updater) plugin to get automatic updates for all future releases.
+
 ## Building
+
+This is only necessary if you are working on the plugin or developing a fork.  To install the plugin, see above.
 
 Before releasing the plugin, the underlying Angular app must be built.  To do that, first make sure you
 have `npm` and `bower` installed.  Then run the following commands:
